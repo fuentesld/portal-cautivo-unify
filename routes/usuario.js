@@ -4,10 +4,13 @@ const bcrypt = require("bcrypt");
 const _ = require("underscore");
 
 const Usuario = require("../models/usuario");
-
+const {
+  verificaToken,
+  verificaAdminRole
+} = require("../middlewares/autenticacion");
 const app = express();
 
-app.get("/usuario", function(req, res) {
+app.get("/usuario", verificaToken, (req, res) => {
   // res. devuelve el body de la respuesta.
   // res.json devuelve en formato json
   // res.send devuelve en formato texto
@@ -34,7 +37,7 @@ app.get("/usuario", function(req, res) {
     });
 });
 
-app.post("/usuario", function(req, res) {
+app.post("/usuario", [verificaToken, verificaAdminRole], function(req, res) {
   // parse application/x-www-form-urlencoded (payload)
   let body = req.body;
 
@@ -56,7 +59,7 @@ app.post("/usuario", function(req, res) {
   });
 });
 
-app.put("/usuario/:id", function(req, res) {
+app.put("/usuario/:id", [verificaToken, verificaAdminRole], function(req, res) {
   // req. lee parametros enviados de la peticion.
   // res.params.xx lee la variable xx de la solicitud
   let id = req.params.id;
@@ -79,7 +82,10 @@ app.put("/usuario/:id", function(req, res) {
   );
 });
 
-app.delete("/usuario/:id", function(req, res) {
+app.delete("/usuario/:id", [verificaToken, verificaAdminRole], function(
+  req,
+  res
+) {
   let id = req.params.id;
   let cambiaEstado = { estado: false };
 
