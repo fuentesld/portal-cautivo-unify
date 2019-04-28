@@ -77,6 +77,11 @@ app.put("/usuario/:id", [verificaToken, verificaAdminRole], function(req, res) {
       if (err) {
         return res.status(400).json({ ok: false, err });
       }
+      if (!usuarioDB)
+        return res
+          .status(400)
+          .json({ ok: false, err: { message: "Usuario no encontrado" } });
+
       res.json({ ok: true, usuario: usuarioDB });
     }
   );
